@@ -137,6 +137,10 @@ img {
 .hero-content {
     max-width: 800px;
     padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
 }
 
 .profile-container {
@@ -965,13 +969,15 @@ body {
 }
 
 /* Availability Status */
+/* Availability Status */
 .status-badge {
-    position: absolute;
-    top: 100px;
-    /* Below navbar */
-    left: 50%;
-    transform: translateX(-50%);
+    position: relative;
+    order: -1;
+    /* Above image on desktop */
     background: rgba(0, 255, 136, 0.1);
+    margin-bottom: 2rem;
+    display: inline-flex;
+    width: auto;
     border: 1px solid var(--accent);
     color: var(--accent);
     padding: 8px 20px;
@@ -1023,13 +1029,140 @@ body {
 
 /* Mobile Responsive adjustment */
 @media (max-width: 768px) {
-    .page-controls {
-        bottom: 20px;
-        gap: 20px;
+
+    /* Layout Stacking */
+    .bento-grid,
+    .timeline-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
     }
 
+    /* Hero Section */
+    .profile-container {
+        width: 180px;
+        height: 180px;
+    }
+
+    .glow-effect {
+        width: 190px;
+        height: 190px;
+    }
+
+    .hero-title {
+        font-size: 2.5rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.2rem;
+    }
+
+    /* Contact Section - Stack Vertical */
+    .contact-wrapper {
+        grid-template-columns: 1fr;
+        max-width: 100%;
+        margin: 0 15px;
+        /* Add side margin */
+    }
+
+    .contact-info {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        padding: 2rem;
+        text-align: center;
+    }
+
+    .contact-links {
+        align-items: center;
+        /* Center links on mobile */
+    }
+
+    .contact-form-container {
+        padding: 2rem;
+    }
+
+    /* Adjust Bento items spans */
+    .span-2,
+    .span-3 {
+        grid-column: span 1;
+    }
+
+    /* Navbar */
+    .navbar {
+        padding: 1rem;
+        flex-direction: column;
+        gap: 1rem;
+        background: rgba(10, 10, 10, 0.9);
+        /* More solid on mobile */
+    }
+
+    .nav-links {
+        gap: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    /* Page Controls & Status */
+    /* Page Controls & Status */
+    .page-controls {
+        display: none;
+    }
+
+
+
+    .page-section {
+        padding-top: 140px;
+        /* Increase padding for taller stacked navbar */
+    }
+
+    /* Mobile Hero Styling: Flex Column for Order */
+    .hero.page-section {
+        height: auto;
+        min-height: 100vh;
+        display: block;
+        /* Disable global flex centering */
+        padding-top: 100px;
+        /* Space for navbar */
+        padding-bottom: 120px;
+        /* Space for bottom nav */
+        overflow-y: auto;
+    }
+
+    .hero-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+        /* Consistent spacing between elements */
+        padding-top: 20px;
+        width: 100%;
+        margin-bottom: 50px;
+    }
+
+    /* Reset individual margins since we use gap */
+    .profile-container,
+    .status-badge,
+    .greeting,
+    .hero-title,
+    .hero-subtitle,
+    .hero-actions {
+        margin: 0 !important;
+    }
+
+    /* Specific adjustments */
     .status-badge {
-        font-size: 0.8rem;
-        padding: 5px 15px;
+        position: relative;
+        order: 0;
+        /* Reset visual order to naturally follow image */
+        top: auto;
+        left: auto;
+        transform: none;
+        display: inline-flex;
+        width: auto;
+    }
+
+    #theme-toggle {
+        position: absolute;
+        top: 20px;
+        right: 20px;
     }
 }

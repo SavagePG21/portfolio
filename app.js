@@ -165,7 +165,7 @@ function processCommand(command) {
     } else if (command.includes('project')) {
         response = "I have built projects like RetailCast AI, Student Accommodation System, and this interactive portfolio. Check the Projects section for more.";
     } else if (command.includes('contact') || command.includes('email') || command.includes('hire')) {
-        response = "You can contact me via email at giftphuti459@gmail.com or connect with me on LinkedIn.";
+        response = "You can go to contact page and send me a message there or contact me via WhatsApp @ 0812741278 or connect with me on LinkedIn.";
     } else if (command.includes('experience') || command.includes('education') || command.includes('journey')) {
         response = "My journey began at Makgetha Secondary School. I have now finished my IT Qualification at Vaal University of Technology and have participated in multiple hackathons.";
     }
