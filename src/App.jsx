@@ -253,7 +253,7 @@ const CinematicHome = ({ onEnter }) => (
       Manaka Phuti Gift
     </h1>
     <h2 className="text-xl md:text-3xl font-light text-amber-400/80 mb-8 tracking-widest uppercase">
-      Software Developer & IT Engineer
+      Software Developer & EFT (3rd line) Engineer
     </h2>
     <div className="w-24 h-1 bg-gradient-to-r from-transparent via-amber-500/50 to-transparent mb-12"></div>
     <p className="max-w-2xl text-stone-400 mb-12 leading-relaxed text-lg">
