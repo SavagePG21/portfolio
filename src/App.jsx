@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
-  Volume2, VolumeX, Play, DoorOpen, Home, 
+  Volume2, VolumeX, DoorOpen, Home, 
   User, Mail, ArrowLeft, MessageSquare, Send, X, 
   Award, Briefcase, Code, GraduationCap, ExternalLink,
   Download
@@ -568,55 +568,117 @@ const ContactView = () => (
 );
 
 
+const normalizeText = (text) => text.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+
 const getAssistantReply = (question) => {
-  const query = question.toLowerCase();
+  const query = normalizeText(question);
+  const allProjects = [...CV_DATA.projects, ...CV_DATA.githubProjects];
+  const matchedProject = allProjects.find((project) =>
+    query.includes(normalizeText(project.name))
+  );
 
-  if (/certif|certificate|credential|az.?900|ccna|ccnav7/.test(query)) {
-    return `Manaka's certificates and coursework:\n${CV_DATA.certifications.map((cert) => `• ${cert}`).join('\n')}`;
+  if (/^(hi|hello|hey|good morning|good afternoon|good evening)\b/.test(query)) {
+    return `Hello! I'm Ask Manaka. I can help with Manaka's skills, projects, tech stacks, work experience, education, certificates, awards, or contact details.`;
   }
 
-  if (/github|repositor|repo\b|project/.test(query)) {
-    const portfolioProjects = CV_DATA.projects
-      .map((project) => `• ${project.name}${project.techStack ? ` — Tech stack: ${project.techStack.join(', ')}` : ''}`)
-      .join('\n');
-    const githubProjects = CV_DATA.githubProjects
-      .map((project) => `• ${project.name}${project.techStack ? ` — Tech stack: ${project.techStack.join(', ')}` : ''} — ${project.url}`)
-      .join('\n');
-    return `Portfolio projects:\n${portfolioProjects}\n\nPublic GitHub repositories:\n${githubProjects}`;
+  if (/^(thanks|thank you|thx)\b/.test(query)) {
+    return "You're welcome! Ask me if you'd like to know more about Manaka's experience, projects, or skills.";
   }
 
-  if (/skill|technology|tech stack|programming|language/.test(query)) {
-    return `Manaka's skills include:\n${Object.entries(CV_DATA.skills)
-      .map(([category, skills]) => `• ${category}: ${skills.join(', ')}`)
+  if (/what can you|how can you|help me|what do you know/.test(query)) {
+    return "I can answer questions using the information on this portfolio: profile, skills, named projects and their tech stacks, GitHub repositories, work experience, education, certificates, awards, and contact details.";
+  }
+
+  if (matchedProject) {
+    const techStack = matchedProject.techStack
+      ? `\nTech stack: ${matchedProject.techStack.join(', ')}.`
+      : '';
+    const projectUrl = matchedProject.url ? `\nGitHub: ${matchedProject.url}` : '';
+    const projectContext = matchedProject.context ? ` (${matchedProject.context})` : '';
+    return `${matchedProject.name}${projectContext}: ${matchedProject.details || matchedProject.description}${techStack}${projectUrl}`;
+  }
+
+  if (/award|achievement|brics|hackathon|datathon|third place|3rd place/.test(query)) {
+    return `Awards and participation:\n${CV_DATA.projects
+      .filter((project) => project.award !== "Portfolio Project")
+      .map((project) => `• ${project.name}${project.context ? ` — ${project.context}` : ''}: ${project.award}`)
       .join('\n')}`;
   }
 
-  if (/experience|work|job|career/.test(query)) {
+  if (/certif|certificate|credential|az.?900|ccna|ccnav7/.test(query)) {
+    const matchingCertificate = CV_DATA.certifications.find((certificate) =>
+      query.includes(normalizeText(certificate))
+    );
+    if (matchingCertificate) return matchingCertificate;
+    return `Manaka's certificates and coursework:\n${CV_DATA.certifications.map((cert) => `• ${cert}`).join('\n')}`;
+  }
+
+  const mentionedSkill = Object.entries(CV_DATA.skills).flatMap(([category, skills]) =>
+    skills.map((skill) => ({ category, skill }))
+  ).find(({ skill }) => query.includes(normalizeText(skill)));
+  if (mentionedSkill && /skill|know|experience|use|proficien|stack|technology/.test(query)) {
+    return `${mentionedSkill.skill} is listed under Manaka's ${mentionedSkill.category} skills.`;
+  }
+
+  if (/skill|technology|tech stack|programming|language|framework|database/.test(query)) {
+    return `Manaka's skills include:\n${Object.entries(CV_DATA.skills)
+      .map(([category, skills]) => `• ${category.replace(/([A-Z])/g, ' $1').trim()}: ${skills.join(', ')}`)
+      .join('\n')}`;
+  }
+
+  if (/experience|work|job|career|current role|responsibilit|eft/.test(query)) {
     const experience = CV_DATA.experience[0];
     return `${experience.title} at ${experience.company} (${experience.date}).\n${experience.duties.map((duty) => `• ${duty}`).join('\n')}`;
   }
 
-  if (/education|study|degree|university|school/.test(query)) {
+  if (/education|study|degree|university|school|qualification/.test(query)) {
     return CV_DATA.education
-      .map(({ degree, institution, date }) => `• ${degree} — ${institution} (${date})`)
+      .map(({ degree, institution, date, details }) =>
+        `• ${degree} — ${institution} (${date})${details ? `: ${details}` : ''}`
+      )
       .join('\n');
   }
 
-  if (/contact|email|phone|linkedin/.test(query)) {
+  if (/contact|email|phone|linkedin|reach|hire/.test(query)) {
     return `You can contact Manaka at ${CV_DATA.contact.email} or ${CV_DATA.contact.phone}.\nGitHub: https://${CV_DATA.contact.github}\nLinkedIn: https://${CV_DATA.contact.linkedin}`;
   }
 
-  return CV_DATA.profile;
+  if (/where|location|based|country/.test(query)) {
+    return `Manaka is based in ${CV_DATA.location}.`;
+  }
+
+  if (/github|repositor|repo\b/.test(query)) {
+    return `Manaka's public GitHub repositories:\n${CV_DATA.githubProjects
+      .map((project) => `• ${project.name}${project.techStack ? ` — ${project.techStack.join(', ')}` : ''}: ${project.url}`)
+      .join('\n')}`;
+  }
+
+  if (/project|portfolio work/.test(query)) {
+    return `Manaka's portfolio projects:\n${CV_DATA.projects
+      .map((project) => `• ${project.name}: ${project.details}${project.techStack ? ` Tech stack: ${project.techStack.join(', ')}.` : ''}`)
+      .join('\n')}`;
+  }
+
+  if (/who are you|about you|tell me about|profile|summary/.test(query)) {
+    return `${CV_DATA.name} is a ${CV_DATA.title} based in ${CV_DATA.location}. ${CV_DATA.profile}`;
+  }
+
+  if (/cv|resume|curriculum vitae/.test(query)) {
+    return "You can download Manaka's CV using the Download CV button on the landing page or About section.";
+  }
+
+  return "I can only answer from the information in this portfolio. Try asking about a specific project, tech stack, skill, certificate, award, work experience, education, or contact details.";
 };
 
 const AIAssistant = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([{ role: 'assistant', text: "Hi, I'm Ask Manaka. Ask me about my projects, GitHub repositories, certificates, skills, experience, education, or contact details." }]);
   const [input, setInput] = useState('');
-  const chatEndRef = useRef(null);
+  const chatMessagesRef = useRef(null);
 
   const scrollToBottom = () => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    const chatMessages = chatMessagesRef.current;
+    chatMessages?.scrollTo({ top: chatMessages.scrollHeight, behavior: "smooth" });
   };
 
   useEffect(() => {
@@ -646,7 +708,7 @@ const AIAssistant = () => {
       </button>
 
       {/* Chat Window */}
-      <div className={`fixed bottom-6 right-6 w-80 sm:w-96 bg-stone-900 border border-stone-700 rounded-xl shadow-2xl flex flex-col overflow-hidden transition-all duration-300 origin-bottom-right z-50 ${isOpen ? 'scale-100 opacity-100 pointer-events-auto' : 'scale-50 opacity-0 pointer-events-none'}`}>
+      <div className={`fixed bottom-6 right-6 w-80 max-w-[calc(100vw-3rem)] sm:w-96 h-[min(34rem,calc(100dvh-3rem))] max-h-[calc(100dvh-3rem)] bg-stone-900 border border-stone-700 rounded-xl shadow-2xl flex flex-col overflow-hidden transition-all duration-300 origin-bottom-right z-50 ${isOpen ? 'scale-100 opacity-100 pointer-events-auto' : 'scale-50 opacity-0 pointer-events-none'}`}>
         <div className="bg-stone-800 p-4 border-b border-stone-700 flex justify-between items-center">
           <div className="flex items-center gap-2 text-amber-500 font-bold">
             <MessageSquare size={18} />
@@ -657,7 +719,7 @@ const AIAssistant = () => {
           </button>
         </div>
         
-        <div className="flex-1 p-4 h-80 overflow-y-auto flex flex-col gap-4 bg-stone-950/50 text-sm">
+        <div ref={chatMessagesRef} className="flex-1 min-h-0 p-4 overflow-y-auto overscroll-y-contain flex flex-col gap-4 bg-stone-950/50 text-sm">
           {messages.map((msg, idx) => (
             <div key={idx} className={`max-w-[85%] whitespace-pre-line break-words p-3 rounded-xl ${msg.role === 'user' ? 'bg-amber-600/20 text-stone-200 self-end rounded-br-none border border-amber-500/30' : 'bg-stone-800 text-stone-300 self-start rounded-bl-none border border-stone-700'}`}>
               {msg.text.split(/(https?:\/\/\S+)/g).map((part, partIndex) => (
@@ -669,7 +731,6 @@ const AIAssistant = () => {
               ))}
             </div>
           ))}
-          <div ref={chatEndRef} />
         </div>
 
         <div className="p-3 bg-stone-800 border-t border-stone-700 flex gap-2">
