@@ -25,6 +25,8 @@ const CV_DATA = {
     web: ["HTML", "CSS", "Angular", "TypeScript", "React"],
     backend: ["FastAPI", "Spring Boot", "Android with Java"],
     databases: ["SQL", "PL/SQL", "database management"],
+    dataEngineering: ["Python data pipelines", "CSV data ingestion", "Data cleaning and preprocessing", "Exploratory data analysis", "Feature engineering", "pandas", "NumPy", "Matplotlib"],
+    machineLearning: ["scikit-learn", "RFM customer segmentation", "K-Means clustering", "Feature scaling", "Time-series forecasting with Prophet", "Collaborative filtering with TruncatedSVD", "Prototype NLP sentiment classification with Logistic Regression"],
     automationCloud: ["n8n workflow automation", "Microsoft Azure Fundamentals (AZ-900)"],
     troubleshooting: ["Log analysis", "root-cause investigation", "payment-system diagnostics", "PC hardware and software"],
     professional: ["Problem-solving", "communication", "teamwork", "cross-functional collaboration"]
@@ -57,6 +59,14 @@ const CV_DATA = {
     }
   ],
   projects: [
+    {
+      name: "RetailCast",
+      context: "Retail Data Analytics & Machine Learning",
+      details: "Built an end-to-end retail analytics workflow for transaction cleaning, sales exploration, demand forecasting, RFM customer segmentation, product recommendations, and prototype sentiment analysis.",
+      techStack: ["Python", "pandas", "NumPy", "scikit-learn", "Prophet", "Matplotlib"],
+      url: "https://github.com/BA-ASSIGNMENT/RetailCast",
+      award: "GitHub Project"
+    },
     {
       name: "GenZ Connect",
       context: "Full-stack Social Platform",
@@ -358,6 +368,16 @@ const ProjectsView = () => (
                 ))}
               </div>
             </div>
+          )}
+          {proj.url && (
+            <a
+              href={proj.url}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 text-amber-400 hover:text-amber-300 text-sm mb-4"
+            >
+              View project on GitHub <ExternalLink size={16} />
+            </a>
           )}
           <div className="inline-block px-3 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-400 text-sm rounded-full">
             {proj.award}
